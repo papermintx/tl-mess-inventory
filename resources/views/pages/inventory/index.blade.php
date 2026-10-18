@@ -50,7 +50,7 @@ new #[Title('Inventaris Aset - Mess Tanjung Lesung')] class extends Component {
     public bool $modalDetail = false;
     public ?Asset $selectedAsset = null;
 
-    #[Rule('nullable|image|max:5120')]
+    #[Rule('nullable|image|mimes:jpeg,jpg,png,webp|max:5120')]
     public $newPhoto = null;
 
     #[Rule('nullable|string|max:255')]
@@ -68,6 +68,16 @@ new #[Title('Inventaris Aset - Mess Tanjung Lesung')] class extends Component {
             ['key' => 'quantity', 'label' => 'JML', 'class' => 'font-bold w-16 text-center whitespace-nowrap'],
             ['key' => 'status', 'label' => 'KONDISI FISIK', 'class' => 'font-bold w-36 text-center whitespace-nowrap'],
             ['key' => 'actions', 'label' => $isAdmin ? 'AKSI PENGELOLA' : 'INSPEKSI ASET', 'class' => 'font-bold w-32 text-center whitespace-nowrap', 'sortable' => false],
+        ];
+    }
+
+    public function messages(): array
+    {
+        return [
+            'newPhoto.image' => 'File harus berupa gambar yang valid.',
+            'newPhoto.mimes' => 'Format foto harus berupa JPEG, JPG, PNG, atau WEBP.',
+            'newPhoto.max' => 'Ukuran foto maksimal adalah 5 MB.',
+            'newPhoto.uploaded' => 'File foto gagal diunggah. Pastikan ukuran file maksimal 5 MB dan server sudah dimulai ulang.',
         ];
     }
 
@@ -133,7 +143,7 @@ new #[Title('Inventaris Aset - Mess Tanjung Lesung')] class extends Component {
             'status' => 'required|in:bagus,perlu_perbaikan,rusak',
             'quantity' => 'required|integer|min:1',
             'notes' => 'nullable|string',
-            'newPhoto' => 'nullable|image|max:5120',
+            'newPhoto' => 'nullable|image|mimes:jpeg,jpg,png,webp|max:5120',
             'photo_note' => 'nullable|string|max:255',
         ]);
 
@@ -258,7 +268,7 @@ new #[Title('Inventaris Aset - Mess Tanjung Lesung')] class extends Component {
         abort_if(!auth()->user()?->isAdmin(), 403, 'Akses Ditolak: Hanya Administrator Pengelola yang berwenang mengunggah foto dokumentasi fisik aset.');
 
         $this->validate([
-            'newPhoto' => 'required|image|max:5120',
+            'newPhoto' => 'required|image|mimes:jpeg,jpg,png,webp|max:5120',
             'photo_note' => 'nullable|string|max:255',
         ]);
 
@@ -335,6 +345,7 @@ new #[Title('Inventaris Aset - Mess Tanjung Lesung')] class extends Component {
             'assets' => $this->assets(),
             'headers' => $this->headers(),
             'rooms' => Room::all(),
+            'editingAsset' => $this->editingAssetId ? Asset::with('photos')->find($this->editingAssetId) : null,
             'countTotal' => Asset::count(),
             'countBagus' => Asset::where('status', 'bagus')->count(),
             'countPerbaikan' => Asset::where('status', 'perlu_perbaikan')->count(),

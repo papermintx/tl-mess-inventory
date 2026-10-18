@@ -113,7 +113,6 @@
                         <x-button 
                             icon="o-trash" 
                             wire:click="delete({{ $asset->id }})" 
-                            wire:confirm="Konfirmasi Audit Keamanan: Apakah Anda yakin ingin menghapus aset '{{ $asset->name }}' ({{ $asset->code }}) dari inventaris? Tindakan ini akan dicatat dalam log audit sistem." 
                             class="btn-ghost btn-xs text-error hover:bg-error/10" 
                             tooltip="Hapus Aset" 
                         />

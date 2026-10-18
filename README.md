@@ -143,8 +143,15 @@ npm run dev
 ```
 
 ### 7. Jalankan Server Lokal
+Jalankan server pengembangan dengan dukungan unggah foto fisik lapangan hingga 10MB:
 ```bash
-php artisan serve
+composer run serve
+# atau jalankan mode pengembangan lengkap (Laravel + Vite bersamaan):
+composer run dev
+```
+*Catatan: Jika menjalankan perintah `php artisan serve` secara langsung tanpa composer, sertakan flag batas upload:*
+```bash
+php -d upload_max_filesize=10M -d post_max_size=12M artisan serve
 ```
 Akses aplikasi melalui peramban: `http://localhost:8000`
 

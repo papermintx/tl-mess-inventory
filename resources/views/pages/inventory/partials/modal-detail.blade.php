@@ -40,9 +40,8 @@
                 @if($selectedAsset->photos->count() > 0)
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-h-72 overflow-y-auto pr-1">
                         @foreach($selectedAsset->photos as $photo)
-                            <div class="rounded-xl overflow-hidden border border-base-300 bg-base-200 shadow-sm">
-                                <img src="{{ asset('storage/' . $photo->photo_path) }}" class="w-full h-40 object-cover" />
-                                
+                            <div class="relative group rounded-xl overflow-hidden border border-base-300 bg-base-200 shadow-sm">
+                                <img src="{{ asset('storage/' . $photo->photo_path) }}" class="w-full h-40 object-cover" />                            
                                 {{-- Keterangan Foto --}}
                                 <div class="p-2.5 bg-base-100 text-xs space-y-1">
                                     <p class="font-medium text-base-content/90 line-clamp-1">{{ $photo->condition_note }}</p>
