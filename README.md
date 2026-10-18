@@ -54,15 +54,26 @@ Sistem web modern berbasis **Laravel 12**, **Livewire 4**, dan **Mary UI (DaisyU
 
 ---
 
-## 👥 Hak Akses & Akun Pengguna Bawaan (Default Credentials)
+## 👥 Hak Akses & Tata Kelola Pengguna
 
-Sistem menerapkan prinsip *Separation of Duties* (SoD) dan *Role-Based Access Control* (RBAC) ketat:
+Sistem dirancang dengan prinsip kemudahan akses informasi dan keamanan bertingkat:
 
-| Peran (Role) | Hak Akses | Kredensial Login |
+1. **Viewer (Default - Seluruh Pengunjung / Tanpa Perlu Login)**
+   - Semua orang yang membuka aplikasi secara otomatis bertindak sebagai **Viewer**.
+   - **Tidak perlu login sama sekali**.
+   - Hak akses: Menjelajahi *landing page showcase*, membuka katalog daftar inventaris mess, melakukan pencarian & filter data, mengecek status kondisi barang, serta membuka galeri foto fisik lapangan dalam mode baca (*Read-Only*).
+
+2. **Pengelola / Admin (Khusus Petugas - Memerlukan Login)**
+   - Satu-satunya pihak yang **wajib melakukan login**.
+   - Hak akses penuh: Mengelola daftar inventaris (menambah aset baru, memperbarui informasi & kondisi fisik barang, mengunggah dokumentasi foto lapangan, dan menghapus aset).
+   - **Kredensial Login Pengelola:**
+     - **Username:** `admin`
+     - **Password:** `password`
+
+| Peran (Role) | Akses Login | Hak Akses Utama |
 | :--- | :--- | :--- |
-| **Administrator (`admin`)** | Hak akses penuh: Tambah/Ubah/Hapus aset, unggah dokumentasi foto fisik lapangan, serta pencatatan audit log sistem. | **Username:** `admin`<br>**Password:** `password` |
-| **Viewer / Staff (`viewer`)** | Hak inspeksi: Melihat inventaris, membuka galeri foto fisik, dan monitoring kondisi barang (Mode Read-Only). | **Username:** `viewer`<br>**Password:** `password` |
-| **Publik / Guest** | Akses publik: Mengakses showcase landing page dan daftar inventaris tanpa perlu login. | Akses langsung tanpa login |
+| **Viewer (Default)** | **Tanpa Login** (Akses Langsung) | Peninjauan inventaris, cek status barang, filter ruangan, galeri foto fisik (*Read-Only*) |
+| **Pengelola / Admin (`admin`)** | **Wajib Login** (`admin` / `password`) | Hak akses penuh: Tambah, edit, hapus aset inventaris, upload foto fisik lapangan, dan pencatatan audit log |
 
 ---
 

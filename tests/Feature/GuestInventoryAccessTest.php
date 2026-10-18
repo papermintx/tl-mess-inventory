@@ -15,7 +15,7 @@ class GuestInventoryAccessTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertSee('Pengelolaan & Inventaris Aset');
-        $response->assertSee('Mode Pengunjung Publik (Guest Viewer)');
+        $response->assertSee('Peran: Viewer (Tanpa Perlu Login)');
     }
 
     /**
