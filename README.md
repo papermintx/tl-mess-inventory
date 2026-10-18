@@ -73,7 +73,7 @@ Sistem dirancang dengan prinsip kemudahan akses informasi dan keamanan bertingka
 | Peran (Role) | Akses Login | Hak Akses Utama |
 | :--- | :--- | :--- |
 | **Viewer (Default)** | **Tanpa Login** (Akses Langsung) | Peninjauan inventaris, cek status barang, filter ruangan, galeri foto fisik (*Read-Only*) |
-| **Pengelola / Admin (`admin`)** | **Wajib Login** (`admin` / `password`) | Hak akses penuh: Tambah, edit, hapus aset inventaris, upload foto fisik lapangan, dan pencatatan audit log |
+| **Pengelola / Admin (`admin`)** | **Wajib Login** (`admin` / `password`) | Hak akses penuh: Tambah, edit, hapus aset inventaris, upload foto fisik lapangan |
 
 ---
 
