@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+
+@theme {
+    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif;
+}
+
+/** daisyUI 5 Theme */
+@plugin "daisyui" {
+    themes: light --default, dark --prefersdark;
+}
+
+/* 
+|--------------------------------------------------------------------------
+| 1. PALET WARNA GLOBAL (Corporate Blue & Ocean Accent)
+|--------------------------------------------------------------------------
+| Semua tombol .btn-primary, .text-primary, .bg-primary di seluruh 
+| halaman (Landing Page, Login, Inventory) otomatis memakai warna ini!
+*/
+[data-theme="light"] {
+    --color-primary: #0d47a1;         /* Deep Navy Blue (Warna resmi & kokoh ala Bank Banten) */
+    --color-primary-content: #ffffff;
+    --color-secondary: #00acc1;       /* Ocean Cyan (Kesan resort / Tanjung Lesung) */
+    --color-secondary-content: #ffffff;
+    --color-accent: #f59e0b;          /* Amber Gold (Highlight status / aksen elegan) */
+    --color-base-100: #ffffff;        /* Background kartu */
+    --color-base-200: #f4f7fb;        /* Background halaman utama (Soft grayish blue) */
+    --color-base-300: #e2e8f0;        /* Garis border lembut */
+}
+
+/* 
+|--------------------------------------------------------------------------
+| 2. KELAS ANIMASI GLOBAL (Bisa dipakai di semua halaman)
+|--------------------------------------------------------------------------
+*/
+
+/* Efek kartu melayang saat di-hover */
+.hover-lift {
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.3s ease;
+}
+.hover-lift:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 20px 25px -5px rgba(13, 71, 161, 0.1), 0 10px 10px -5px rgba(13, 71, 161, 0.04);
+}
+
+/* Efek Glassmorphism transparan modern */
+.glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+/* Animasi melayang perlahan (floating hero effect) */
+@keyframes softFloat {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-8px); }
+}
+
+.animate-float {
+    animation: softFloat 4s ease-in-out infinite;
+}
+
+/* maryUI & Paginator */
+@source "../../vendor/robsontenorio/mary/src/View/Components/**/*.php";
+
+.mary-table-pagination span[aria-current="page"] > span {
+    @apply bg-primary text-base-100;
+}
+
+.mary-table-pagination button {
+    @apply cursor-pointer;
+}
+
+/* Ruang aman (safe area) agar tombol navigasi & pagination tidak tertimpa Floating Action Button */
+@media (min-width: 640px) {
+    .mary-table-pagination nav > div:last-child {
+        padding-right: 14rem !important;
+    }
+}
