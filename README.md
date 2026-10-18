@@ -8,15 +8,6 @@ Sistem web modern berbasis **Laravel 12**, **Livewire 4**, dan **Mary UI (DaisyU
 
 ### 1. Showcase Akomodasi Mess (Landing Page)
 - **Hero Banner Sinematik**: Latar pemandangan *sunset golden hour* pesisir Tanjung Lesung dengan tipografi kontras tinggi yang nyaman dibaca.
-- **Ringkasan Metrik Cepat**: Statistik total ruangan, aset terdata, kapasitas penghuni, serta persentase kondisi aset siap pakai.
-- **Fasilitas Standar Mess**: Kartu fasilitas komunal dan privat (kamar berpendingin, ruang rekreasi/TV, dapur & dispenser air).
-- **Tata Letak Kamar & Area Mess (Rata Tengah)**:
-  - Disusun simetris dan proporsional menggunakan flexbox `justify-center`.
-  - Dilengkapi foto aspek lanskap (16:9), badge kode ruangan, kapasitas orang, deskripsi, dan penghitung aset fisik terdaftar secara dinamis.
-- **Footer Resmi 4 Kolom**:
-  - Disesuaikan dengan palet warna utama (*Deep Navy Blue* `#0d47a1`).
-  - Ornamen lengkungan gelombang laut (*wave curve*).
-  - Tautan navigasi (*Explore*), saluran resmi (*Official Sites*), serta kontak reservasi pengelola: **`+62 838-7200-3995`** (WhatsApp & Telepon).
 
 ### 2. Pengelolaan Inventaris Aset (Livewire 4 SPA)
 - **Tabel Responsif & Proporsional**:
@@ -34,7 +25,7 @@ Sistem web modern berbasis **Laravel 12**, **Livewire 4**, dan **Mary UI (DaisyU
   - Tata letak paginasi diatur dengan jarak aman agar tombol navigasi nomor halaman tidak tertimpa oleh *Floating Action Button*.
   - Tombol aksi ganda: Administrator dapat menambah aset melalui *Header Action* di bagian atas maupun *Floating Button* di sudut kanan bawah.
 
-### 3. Arsitektur Data Ruangan & Fasilitas Tanpa Beban Database (*In-Memory*)
+### 3. Arsitektur Data Ruangan
 - Data master **7 Ruangan Mess** dan **Fasilitas** diakses langsung melalui model in-memory (`App\Models\Room` dan `App\Models\Facility`), sehingga sangat cepat dan bebas dari kueri tabel database yang berulang.
 - Database relasional murni dikhususkan untuk **Akun Pengguna (`users`)**, **Data Inventaris Aset (`assets`)**, dan **Dokumentasi Foto Fisik (`asset_photos`)**.
 
