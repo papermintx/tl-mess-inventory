@@ -200,7 +200,3 @@ vendor/bin/pint --format agent
 ```
 
 ---
-
-## 📄 Lisensi
-Proyek ini dikembangkan secara tertutup untuk kebutuhan operasional Mess Tanjung Lesung.
-Semua hak cipta dilindungi undang-undang © 2026 Mess Tanjung Lesung.
