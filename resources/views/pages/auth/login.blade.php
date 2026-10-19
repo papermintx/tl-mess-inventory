@@ -16,13 +16,11 @@ new #[Layout('layouts.auth')] class extends Component
     #[Rule('required')]
     public string $password = '';
 
-    public bool $remember = false;
-
     public function login()
     {
         $this->validate();
 
-        if (Auth::attempt(['username' => $this->username, 'password' => $this->password], $this->remember)) {
+        if (Auth::attempt(['username' => $this->username, 'password' => $this->password])) {
             session()->regenerate();
             $this->success('Selamat datang kembali!', position: 'toast-top');
 
@@ -63,8 +61,7 @@ new #[Layout('layouts.auth')] class extends Component
                     placeholder="••••••••" 
                     inline 
                 />
-                <div class="flex items-center justify-between text-sm py-1">
-                    <x-checkbox label="Ingat saya" wire:model="remember" class="checkbox-primary checkbox-sm" />
+                <div class="flex items-center justify-end text-sm py-1">
                     <a href="/" class="text-primary hover:underline text-xs" wire:navigate>
                         Kembali ke Showcase
                     </a>

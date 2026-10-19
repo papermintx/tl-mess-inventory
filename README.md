@@ -31,6 +31,34 @@ Sistem web modern berbasis **Laravel 12**, **Livewire 4**, dan **Mary UI (DaisyU
 
 ---
 
+## 📸 Tangkapan Layar Sistem (Screenshots)
+
+Berikut dokumentasi antarmuka aplikasi Sistem Informasi Showcase Mess & Inventarisasi Aset:
+
+### 1. Showcase Akomodasi Mess (Landing Page)
+| Hero Banner Sinematik | Ringkasan Metrik & Fasilitas |
+| :---: | :---: |
+| ![Hero Banner Sinematik](Screenshot_1.png) | ![Ringkasan Metrik & Fasilitas](Screenshot_2.png) |
+
+| Detail Fasilitas Standar Mess | Tata Letak Kamar & Area Mess |
+| :---: | :---: |
+| ![Detail Fasilitas Mess](Screenshot_3.png) | ![Tata Letak Kamar](Screenshot_4.png) |
+
+| Footer Resmi & Informasi Kontak Pengelola |
+| :---: |
+| ![Footer & Kontak Pengelola](Screenshot_5.png) |
+
+### 2. Pengelolaan Inventaris Aset & Autentikasi
+| Mode Viewer (Publik / Tanpa Login) | Mode Pengelola / Admin (Akses Penuh) |
+| :---: | :---: |
+| ![Katalog Inventaris Viewer](Screenshot_6.png) | ![Pengelolaan Inventaris Admin](Screenshot_8.png) |
+
+| Halaman Login Administrator |
+| :---: |
+| ![Halaman Login Administrator](Screenshot_7.png) |
+
+---
+
 ## 🛏️ Daftar Data Master Ruangan Mess
 
 | Kode Ruangan | Nama Ruangan / Area | Kapasitas | Foto Cover |
@@ -48,6 +76,14 @@ Sistem web modern berbasis **Laravel 12**, **Livewire 4**, dan **Mary UI (DaisyU
 ## 👥 Hak Akses & Tata Kelola Pengguna
 
 Sistem dirancang dengan prinsip kemudahan akses informasi dan keamanan bertingkat:
+
+> [!IMPORTANT]
+> ### 🔑 Kredensial Default Login Pengelola (Admin)
+> - **URL Login:** `http://localhost:8000/login`
+> - **Username:** `admin`
+> - **Password:** `password`
+> 
+> Akun administrator ini secara otomatis dibuat saat menjalankan database seeder (`php artisan migrate:fresh --seed`) untuk keperluan pengelolaan penuh aset inventaris.
 
 1. **Viewer (Default - Seluruh Pengunjung / Tanpa Perlu Login)**
    - Semua orang yang membuka aplikasi secara otomatis bertindak sebagai **Viewer**.
@@ -117,10 +153,11 @@ php artisan storage:link
 ```
 
 ### 5. Jalankan Migrasi & Database Seeder
-Jalankan migrasi bersih beserta data mock inventaris dan akun:
+Jalankan migrasi bersih beserta data mock inventaris dan akun pengelola:
 ```bash
 php artisan migrate:fresh --seed
 ```
+*Catatan: Perintah seeder otomatis membuat akun administrator dengan username: **`admin`** dan password: **`password`**.*
 
 ### 6. Kompilasi Aset Frontend
 Untuk mode produksi:
@@ -144,7 +181,9 @@ composer run dev
 ```bash
 php -d upload_max_filesize=10M -d post_max_size=12M artisan serve
 ```
-Akses aplikasi melalui peramban: `http://localhost:8000`
+Akses aplikasi melalui peramban:
+- **Showcase & Katalog Inventaris (Mode Viewer):** `http://localhost:8000`
+- **Login Administrator:** `http://localhost:8000/login` *(Gunakan username: `admin` & password: `password`)*
 
 ---
 
