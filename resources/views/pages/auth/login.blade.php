@@ -40,7 +40,7 @@ new #[Layout('layouts.auth')] class extends Component
                 <x-icon name="o-building-office-2" class="w-8 h-8" />
             </div>
             <h1 class="text-2xl font-bold tracking-tight text-base-content">Sistem Inventaris Mess</h1>
-            <p class="text-sm text-base-content/70">Kawasan Tanjung Lesung • Portofolio IT Bank Banten</p>
+            <p class="text-sm text-base-content/70">Kawasan Tanjung Lesung</p>
         </div>
 
         {{-- Login Card --}}

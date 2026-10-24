@@ -123,20 +123,33 @@ git clone <url-repositori-anda>
 cd tl-mess-inventory
 ```
 
-### 2. Instalasi Dependensi PHP & JavaScript
+### 2. Jalankan PostgreSQL dengan Docker
+Jika Anda belum memiliki PostgreSQL lokal, Anda dapat menjalankannya dengan mudah menggunakan Docker:
+
+```bash
+# Jalankan container PostgreSQL
+docker run --name postgres-db -e POSTGRES_USER=papermint -e POSTGRES_PASSWORD='password_anda' -e POSTGRES_DB=mess_db -p 5432:5432 -d postgres:latest
+```
+
+*Jika container PostgreSQL sudah ada, pastikan database `mess_db` sudah dibuat:*
+```bash
+docker exec -it postgres-db psql -U papermint -d postgres -c "CREATE DATABASE mess_db;"
+```
+
+### 3. Instalasi Dependensi PHP & JavaScript
 ```bash
 composer install
 npm install
 ```
 
-### 3. Konfigurasi Lingkungan (.env)
-Salin berkas contoh lingkungan dan generate app key:
+### 4. Konfigurasi Lingkungan (.env) & Generate App Key
+Salin berkas contoh lingkungan dan **wajib** generate application encryption key:
 ```bash
 cp .env.example .env
 php artisan key:generate
 ```
 
-Sesuaikan parameter koneksi database pada `.env` (contoh untuk PostgreSQL):
+Sesuaikan parameter koneksi database pada `.env` agar terhubung ke container Docker:
 ```env
 DB_CONNECTION=pgsql
 DB_HOST=127.0.0.1
@@ -146,20 +159,23 @@ DB_USERNAME=nama_user_anda
 DB_PASSWORD=password_anda
 ```
 
-### 4. Tautkan Storage Simbolik
-Pastikan folder berkas publik tertaut ke storage penyimpanan foto fisik:
+> [!TIP]
+> Jika password database mengandung karakter khusus (seperti `$`, `&`, atau `#`), pastikan nilai `DB_PASSWORD` diapit oleh tanda petik tunggal (`'...'`) di file `.env`.
+
+### 5. Tautkan Storage Simbolik
+Pastikan folder berkas publik tertaut ke storage penyimpanan foto fisik aset:
 ```bash
 php artisan storage:link
 ```
 
-### 5. Jalankan Migrasi & Database Seeder
+### 6. Jalankan Migrasi & Database Seeder
 Jalankan migrasi bersih beserta data mock inventaris dan akun pengelola:
 ```bash
 php artisan migrate:fresh --seed
 ```
-*Catatan: Perintah seeder otomatis membuat akun administrator dengan username: **`admin`** dan password: **`password`**.*
+*Catatan: Perintah seeder otomatis membuat akun administrator (`admin` / `password`) dan viewer (`viewer` / `password`).*
 
-### 6. Kompilasi Aset Frontend
+### 7. Kompilasi Aset Frontend
 Untuk mode produksi:
 ```bash
 npm run build
@@ -170,22 +186,32 @@ Untuk mode pengembangan aktif:
 npm run dev
 ```
 
-### 7. Jalankan Server Lokal
+### 8. Jalankan Server Lokal
 Jalankan server pengembangan dengan dukungan unggah foto fisik lapangan hingga 10MB:
 ```bash
 composer run serve
 # atau jalankan mode pengembangan lengkap (Laravel + Vite bersamaan):
 composer run dev
+# atau menggunakan artisan langsung:
+php artisan serve
 ```
-*Catatan: Jika menjalankan perintah `php artisan serve` secara langsung tanpa composer, sertakan flag batas upload:*
-```bash
-php -d upload_max_filesize=10M -d post_max_size=12M artisan serve
-```
+
 Akses aplikasi melalui peramban:
 - **Showcase & Katalog Inventaris (Mode Viewer):** `http://localhost:8000`
 - **Login Administrator:** `http://localhost:8000/login` *(Gunakan username: `admin` & password: `password`)*
 
 ---
+
+## 🛠️ Catatan Pemecahan Masalah (Troubleshooting)
+
+- **`No application encryption key has been specified` (MissingAppKeyException):**
+  Jalankan perintah `php artisan key:generate` lalu refresh browser Anda.
+- **`Vite manifest not found`:**
+  Jalankan `npm install` kemudian `npm run build` atau jalankan `npm run dev`.
+- **Foto aset tidak muncul (404 Not Found):**
+  Pastikan symlink storage sudah aktif dengan menjalankan `php artisan storage:link`.
+- **Koneksi Database Gagal (Connection Refused):**
+  Pastikan container Docker PostgreSQL sedang berjalan dengan mengecek `docker ps`. Jika belum jalan, hidupkan dengan `docker start postgres-db`.
 
 ## 🧪 Pengujian & Kualitas Kode
 

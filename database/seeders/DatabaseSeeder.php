@@ -7,6 +7,7 @@ use App\Models\AssetPhoto;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -208,6 +209,28 @@ class DatabaseSeeder extends Seeder
         ]);
 
         // 3. Dokumentasi Foto Fisik Mock Aset
+        if (! Storage::disk('public')->exists('assets')) {
+            Storage::disk('public')->makeDirectory('assets');
+        }
+
+        $mockPhotosMap = [
+            'assets/ac-daikin-kmr01.jpg' => public_path('images/kamar-depan.jpeg'),
+            'assets/kasur-kmr01.jpg' => public_path('images/facilities/kamar.jpeg'),
+            'assets/ac-sharp-kmr03.jpg' => public_path('images/kamar-tengah.jpeg'),
+            'assets/smart-tv-comm01.jpg' => public_path('images/facilities/ruang-tamu.jpeg'),
+            'assets/sofa-bed-comm01.jpg' => public_path('images/kumpul.jpeg'),
+            'assets/kulkas-kit01.jpg' => public_path('images/facilities/dapur.jpeg'),
+            'assets/dispenser-kit01.jpg' => public_path('images/masak-masak.jpeg'),
+            'assets/water-heater-bth01.jpg' => public_path('images/mandi-depan.jpeg'),
+            'assets/exhaust-fan-bth02.jpg' => public_path('images/mandi-belakang.jpeg'),
+        ];
+
+        foreach ($mockPhotosMap as $targetPath => $sourcePath) {
+            if (file_exists($sourcePath) && ! Storage::disk('public')->exists($targetPath)) {
+                Storage::disk('public')->put($targetPath, file_get_contents($sourcePath));
+            }
+        }
+
         AssetPhoto::create([
             'asset_id' => $acDaikinKmr01->id,
             'photo_path' => 'assets/ac-daikin-kmr01.jpg',
