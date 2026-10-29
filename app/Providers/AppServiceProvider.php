@@ -23,27 +23,32 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        // Kebijakan Keamanan Perbankan: Role & Permissions
+        // Kebijakan Keamanan Perbankan: Role & Permissions Spatie
         Gate::policy(Asset::class, AssetPolicy::class);
 
+        // Super-admin bypass: user dengan role 'admin' memiliki akses penuh ke semua kemampuan
+        Gate::before(function (User $user, string $ability): ?bool {
+            return $user->hasRole('admin') ? true : null;
+        });
+
         Gate::define('manage-assets', function (User $user): bool {
-            return $user->isAdmin();
+            return $user->hasPermissionTo('manage-assets') || $user->isAdmin();
         });
 
         Gate::define('create-assets', function (User $user): bool {
-            return $user->isAdmin();
+            return $user->hasPermissionTo('create-assets') || $user->isAdmin();
         });
 
         Gate::define('edit-assets', function (User $user): bool {
-            return $user->isAdmin();
+            return $user->hasPermissionTo('edit-assets') || $user->isAdmin();
         });
 
         Gate::define('delete-assets', function (User $user): bool {
-            return $user->isAdmin();
+            return $user->hasPermissionTo('delete-assets') || $user->isAdmin();
         });
 
         Gate::define('upload-asset-photos', function (User $user): bool {
-            return $user->isAdmin();
+            return $user->hasPermissionTo('upload-asset-photos') || $user->isAdmin();
         });
     }
 }

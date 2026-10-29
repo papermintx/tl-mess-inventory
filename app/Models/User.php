@@ -8,11 +8,12 @@ use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, HasRoles, Notifiable;
 
     public const DEFAULT_ROLE = 'viewer';
 
@@ -52,16 +53,32 @@ class User extends Authenticatable
 
     public function isAdmin(): bool
     {
-        return $this->role === UserRole::Admin->value;
+        if ($this->role === UserRole::Admin->value) {
+            return true;
+        }
+
+        return $this->exists && method_exists($this, 'hasRole') ? $this->hasRole('admin') : false;
     }
 
     public function isViewer(): bool
     {
-        return $this->role === UserRole::Viewer->value || empty($this->role);
+        if ($this->isAdmin()) {
+            return false;
+        }
+
+        if ($this->role === UserRole::Viewer->value || empty($this->role)) {
+            return true;
+        }
+
+        return $this->exists && method_exists($this, 'hasRole') ? $this->hasRole('viewer') : true;
     }
 
     public function getRoleEnumAttribute(): UserRole
     {
+        if ($this->isAdmin()) {
+            return UserRole::Admin;
+        }
+
         return UserRole::tryFrom((string) $this->role) ?? UserRole::Viewer;
     }
 

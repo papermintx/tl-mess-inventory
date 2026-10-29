@@ -22,13 +22,16 @@ class DatabaseSeeder extends Seeder
             'role' => 'admin',
         ]);
 
-        User::create([
+        $viewer = User::create([
             'name' => 'Staff / Peserta Magang (Viewer)',
             'username' => 'viewer',
             'email' => 'viewer@tanjunglesung.com',
             'password' => Hash::make('password'),
             'role' => 'viewer',
         ]);
+
+        // Setup Spatie Role & Permission
+        $this->call(RolePermissionSeeder::class);
 
         // 2. Data Mock Aset Inventaris (terhubung ke kode ruangan in-memory)
         // KMR-01: Kamar Cowok 01 (Area Depan)

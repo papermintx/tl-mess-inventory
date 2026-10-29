@@ -3,19 +3,27 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\ShowcaseController;
 use Illuminate\Support\Facades\Route;
+use Livewire\Volt\Volt;
 
-// Halaman Publik (Showcase & Inventaris - Bisa diakses oleh Guest / Viewer / Admin)
+// Halaman Publik (Showcase - Bisa diakses Guest / Viewer / Admin)
 Route::get('/', [ShowcaseController::class, 'index'])->name('showcase');
-Route::livewire('/inventory', 'pages::inventory.index')->name('inventory.index');
 
-// Route Guest (Hanya untuk yang belum login)
-Route::middleware('guest')->group(function () {
-    // Gunakan 'pages::auth.login' (dengan tanda ::)
-    Route::livewire('/login', 'pages::auth.login')->name('login');
-});
+// Halaman Inventaris Mess (Bisa diakses Guest / Viewer / Admin)
+Volt::route('/inventory', 'inventory.index')->name('inventory.index');
 
-// Route Protected (Wajib Login)
-Route::middleware('auth')->group(function () {
-    // Logout
-    Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])->name('logout');
-});
+// Redirect /dashboard bawaan Breeze langsung ke /inventory
+Route::get('/dashboard', function () {
+    return redirect()->route('inventory.index');
+})->middleware(['auth'])->name('dashboard');
+
+// Profil Pengguna (Breeze)
+Route::view('profile', 'profile')
+    ->middleware(['auth'])
+    ->name('profile');
+
+// Logout Pengguna
+Route::match(['get', 'post'], '/logout', [AuthController::class, 'logout'])
+    ->name('logout');
+
+// Route Auth Breeze (login, register, forgot-password, logout)
+require __DIR__.'/auth.php';

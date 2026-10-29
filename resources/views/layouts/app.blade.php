@@ -40,8 +40,8 @@
         </x-nav>
 
         {{-- MAIN --}}
-            <x-main full-width>
-               {{-- SIDEBAR COLLAPSIBLE DENGAN EFEK GLASSMORPHISM --}}
+        <x-main full-width>
+            {{-- SIDEBAR COLLAPSIBLE DENGAN EFEK GLASSMORPHISM --}}
             <x-slot:sidebar drawer="main-drawer" collapsible class="glass-card lg:bg-base-100/80 backdrop-blur-md border-r border-base-300/60">
 
                 {{-- LOGO & BRAND (KLIK UNTUK TOGGLE COLLAPSE) --}}
@@ -62,6 +62,23 @@
                     </div>
                 </div>
 
+                {{-- USER INFO SAAT LOGIN --}}
+                @auth
+                    <div class="p-3 border-b border-base-300/40 hidden-when-collapsed">
+                        <div class="flex items-center gap-2">
+                            <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase">
+                                {{ substr(auth()->user()->name, 0, 2) }}
+                            </div>
+                            <div class="overflow-hidden">
+                                <p class="text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
+                                <span class="badge badge-xs {{ auth()->user()->isAdmin() ? 'badge-primary' : 'badge-neutral' }} text-[10px]">
+                                    {{ auth()->user()->isAdmin() ? 'Administrator' : 'Viewer' }}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                @endauth
+
                 {{-- MENU UTAMA --}}
                 <x-menu activate-by-route class="mt-3">
                     <x-menu-item title="Showcase Mess" icon="o-home" link="/" />                
@@ -70,6 +87,11 @@
                     <x-menu-separator />
 
                     @auth
+                        <x-menu-item 
+                            title="Profil Saya" 
+                            icon="o-user" 
+                            link="/profile" 
+                        />
                         <x-menu-item 
                             title="Logout" 
                             icon="o-arrow-left-on-rectangle" 
@@ -84,12 +106,23 @@
                             link="/login" 
                             class="text-primary hover:bg-primary/10 font-semibold" 
                         />
+                        <x-menu-item 
+                            title="Daftar Akun Baru" 
+                            icon="o-user-plus" 
+                            link="/register" 
+                            class="hover:bg-base-200" 
+                        />
                     @endauth
                 </x-menu>
             </x-slot:sidebar>
 
             {{-- CONTENT SLOT --}}
             <x-slot:content>
+                @if (isset($header))
+                    <div class="mb-6 p-4 bg-base-100 rounded-xl shadow-sm border border-base-300">
+                        {{ $header }}
+                    </div>
+                @endif
                 {{ $slot }}
             </x-slot:content>
         </x-main>
