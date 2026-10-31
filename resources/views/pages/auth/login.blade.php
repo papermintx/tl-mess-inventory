@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Rule;
-use Livewire\Component;
+use Livewire\Volt\Component;
 use Mary\Traits\Toast;
 
 new #[Layout('layouts.auth')] class extends Component

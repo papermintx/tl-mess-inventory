@@ -2,7 +2,7 @@
 
 use App\Models\User;
 use Livewire\Attributes\Title;
-use Livewire\Component;
+use Livewire\Volt\Component;
 use Livewire\WithPagination;
 use Mary\Traits\Toast;
 
@@ -453,3 +453,4 @@ new #[Title('Kelola Hak Akses Administrator - Mess Tanjung Lesung')] class exten
         @endif
     </div>
 </div>
+
