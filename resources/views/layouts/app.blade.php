@@ -66,14 +66,18 @@
                 @auth
                     <div class="p-3 border-b border-base-300/40 hidden-when-collapsed">
                         <div class="flex items-center gap-2">
-                            <div class="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase">
+                            <div class="w-8 h-8 rounded-full {{ auth()->user()->isFirstAdmin() ? 'bg-amber-500/20 text-amber-700' : 'bg-primary/10 text-primary' }} flex items-center justify-center font-bold text-xs uppercase">
                                 {{ substr(auth()->user()->name, 0, 2) }}
                             </div>
                             <div class="overflow-hidden">
                                 <p class="text-xs font-semibold truncate">{{ auth()->user()->name }}</p>
-                                <span class="badge badge-xs {{ auth()->user()->isAdmin() ? 'badge-primary' : 'badge-neutral' }} text-[10px]">
-                                    {{ auth()->user()->isAdmin() ? 'Administrator' : 'Viewer' }}
-                                </span>
+                                @if(auth()->user()->isFirstAdmin())
+                                    <span class="badge badge-xs badge-warning text-[10px] font-bold">👑 Admin Utama</span>
+                                @elseif(auth()->user()->isAdmin())
+                                    <span class="badge badge-xs badge-primary text-[10px]">Administrator</span>
+                                @else
+                                    <span class="badge badge-xs badge-neutral text-[10px]">Viewer</span>
+                                @endif
                             </div>
                         </div>
                     </div>
@@ -87,6 +91,19 @@
                     <x-menu-separator />
 
                     @auth
+                        @if(auth()->user()->isFirstAdmin())
+                            @php
+                                $pendingAdminRequestsCount = \App\Models\User::where('admin_request_status', 'pending')->count();
+                            @endphp
+                            <x-menu-item 
+                                title="Persetujuan Admin" 
+                                icon="o-shield-check" 
+                                link="/admin/access-requests"
+                                :badge="$pendingAdminRequestsCount > 0 ? (string)$pendingAdminRequestsCount : null"
+                                badge-classes="badge-warning font-bold"
+                            />
+                        @endif
+
                         <x-menu-item 
                             title="Profil Saya" 
                             icon="o-user" 

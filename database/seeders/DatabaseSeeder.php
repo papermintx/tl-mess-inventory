@@ -20,6 +20,9 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@tanjunglesung.com',
             'password' => Hash::make('password'),
             'role' => 'admin',
+            'is_first_admin' => true,
+            'admin_request_status' => 'approved',
+            'admin_action_at' => now(),
         ]);
 
         $viewer = User::create([

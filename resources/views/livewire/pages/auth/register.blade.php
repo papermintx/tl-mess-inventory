@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use Livewire\Attributes\Layout;
 use Livewire\Volt\Component;
+use Spatie\Permission\Models\Role;
 
 new #[Layout('layouts.guest')] class extends Component
 {
@@ -15,6 +16,17 @@ new #[Layout('layouts.guest')] class extends Component
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
+    public bool $request_admin = false;
+    public string $admin_request_reason = '';
+
+    public bool $isFirstUser = false;
+
+    public function mount(): void
+    {
+        // Deteksi apakah sistem belum memiliki Administrator Utama
+        $this->isFirstUser = ! User::where('is_first_admin', true)->exists()
+            && User::where('role', 'admin')->count() === 0;
+    }
 
     /**
      * Handle an incoming registration request.
@@ -31,16 +43,44 @@ new #[Layout('layouts.guest')] class extends Component
             $rules['username'] = ['string', 'alpha_dash', 'max:50', 'unique:'.User::class.',username'];
         }
 
+        if ($this->request_admin && ! $this->isFirstUser) {
+            $rules['admin_request_reason'] = ['nullable', 'string', 'max:500'];
+        }
+
         $validated = $this->validate($rules);
 
         $validated['username'] = ! empty($this->username) ? $this->username : explode('@', $this->email)[0];
         $validated['password'] = Hash::make($validated['password']);
-        $validated['role'] = 'viewer';
 
-        $user = User::create($validated);
+        // Pastikan role Spatie sudah tersedia
+        Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
+        Role::firstOrCreate(['name' => 'viewer', 'guard_name' => 'web']);
 
-        // Berikan role Spatie default 'viewer'
-        if (method_exists($user, 'assignRole')) {
+        if ($this->isFirstUser) {
+            // Pendaftar pertama otomatis menjadi Administrator Utama
+            $validated['role'] = 'admin';
+            $validated['is_first_admin'] = true;
+            $validated['admin_request_status'] = 'approved';
+            $validated['admin_action_at'] = now();
+
+            $user = User::create($validated);
+            $user->assignRole('admin');
+        } else {
+            // Pengguna selanjutnya default sebagai Viewer
+            $validated['role'] = 'viewer';
+            $validated['is_first_admin'] = false;
+
+            if ($this->request_admin) {
+                $validated['admin_request_status'] = 'pending';
+                $validated['admin_request_reason'] = ! empty($this->admin_request_reason) 
+                    ? $this->admin_request_reason 
+                    : 'Permohonan diajukan saat pendaftaran akun baru.';
+                $validated['admin_requested_at'] = now();
+            } else {
+                $validated['admin_request_status'] = null;
+            }
+
+            $user = User::create($validated);
             $user->assignRole('viewer');
         }
 
@@ -48,15 +88,34 @@ new #[Layout('layouts.guest')] class extends Component
 
         Auth::login($user);
 
+        if ($this->isFirstUser) {
+            session()->flash('status', 'Selamat! Anda terdaftar sebagai Administrator Pertama.');
+        } elseif ($this->request_admin) {
+            session()->flash('status', 'Pendaftaran berhasil. Permohonan akses Administrator Anda sedang menunggu persetujuan dari Administrator Pertama.');
+        }
+
         $this->redirect(route('dashboard', absolute: false), navigate: true);
     }
 }; ?>
 
 <div>
-    <div class="mb-4 text-center">
+    <div class="mb-5 text-center">
         <h2 class="text-xl font-bold text-gray-800">Daftar Akun Baru</h2>
-        <p class="text-xs text-gray-500 mt-1">Sistem Inventaris Mess Tanjung Lesung</p>
+        <p class="text-xs text-gray-500 mt-1">Sistem Inventaris Mess Kawasan Tanjung Lesung</p>
     </div>
+
+    {{-- Banner Khusus Pendaftar Pertama --}}
+    @if ($isFirstUser)
+        <div class="mb-5 p-3.5 bg-amber-500/10 border border-amber-500/30 rounded-xl text-xs text-amber-900 flex items-start gap-2.5">
+            <span class="text-lg">👑</span>
+            <div>
+                <p class="font-bold text-amber-900">Pendaftaran Administrator Pertama</p>
+                <p class="text-amber-800/90 mt-0.5 leading-relaxed">
+                    Sistem mendeteksi belum ada Administrator. Akun pertama yang didaftarkan ini akan otomatis menjadi <b>Administrator Utama (Pemilik Otoritas Tunggal)</b> yang berwenang menyetujui hak akses admin bagi staf lain.
+                </p>
+            </div>
+        </div>
+    @endif
 
     <form wire:submit="register">
         <!-- Nama Lengkap -->
@@ -101,13 +160,46 @@ new #[Layout('layouts.guest')] class extends Component
             <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
         </div>
 
+        {{-- Opsi Pengajuan Akses Admin (Hanya jika bukan pendaftar pertama) --}}
+        @if (! $isFirstUser)
+            <div class="mt-5 p-3.5 bg-gray-50 rounded-xl border border-gray-200 space-y-2">
+                <label class="flex items-start gap-2.5 cursor-pointer select-none">
+                    <input 
+                        type="checkbox" 
+                        wire:model.live="request_admin" 
+                        class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500 mt-0.5"
+                    />
+                    <div class="text-xs">
+                        <span class="font-semibold text-gray-800 block">Ajukan Hak Akses Administrator Pengelola</span>
+                        <span class="text-gray-500 block leading-relaxed">
+                            Centang jika Anda bertugas mengelola inventaris. Permohonan Anda akan ditinjau oleh Administrator Pertama.
+                        </span>
+                    </div>
+                </label>
+
+                @if ($request_admin)
+                    <div class="pt-2">
+                        <x-input-label for="admin_request_reason" value="Alasan / Jabatan Tugas (Opsional)" />
+                        <textarea 
+                            wire:model="admin_request_reason" 
+                            id="admin_request_reason"
+                            class="block w-full mt-1 border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-xs" 
+                            placeholder="Contoh: Staf Logistik & Inventaris Mess Kawasan..."
+                            rows="2"
+                        ></textarea>
+                        <x-input-error :messages="$errors->get('admin_request_reason')" class="mt-1" />
+                    </div>
+                @endif
+            </div>
+        @endif
+
         <div class="flex items-center justify-between mt-6">
             <a class="underline text-xs text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}" wire:navigate>
                 Sudah punya akun? Masuk
             </a>
 
             <x-primary-button class="ms-4">
-                Daftar Sekarang
+                {{ $isFirstUser ? 'Daftar Sebagai Admin Utama' : 'Daftar Sekarang' }}
             </x-primary-button>
         </div>
     </form>

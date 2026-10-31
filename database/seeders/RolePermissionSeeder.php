@@ -27,6 +27,7 @@ class RolePermissionSeeder extends Seeder
             'delete-assets',
             'upload-asset-photos',
             'delete-asset-photos',
+            'manage-admin-requests',
         ];
 
         foreach ($permissions as $permissionName) {
@@ -43,7 +44,7 @@ class RolePermissionSeeder extends Seeder
 
         // 5. Sinkronisasi User yang sudah ada di database ke Role Spatie
         User::all()->each(function (User $user) use ($adminRole, $viewerRole) {
-            if ($user->role === 'admin' || $user->username === 'admin') {
+            if ($user->is_first_admin || $user->role === 'admin' || $user->username === 'admin') {
                 $user->assignRole($adminRole);
             } else {
                 $user->assignRole($viewerRole);

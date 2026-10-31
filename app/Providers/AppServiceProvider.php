@@ -26,9 +26,18 @@ class AppServiceProvider extends ServiceProvider
         // Kebijakan Keamanan Perbankan: Role & Permissions Spatie
         Gate::policy(Asset::class, AssetPolicy::class);
 
-        // Super-admin bypass: user dengan role 'admin' memiliki akses penuh ke semua kemampuan
+        // Super-admin bypass: user dengan role 'admin' memiliki akses penuh ke sebagian besar kemampuan,
+        // KECUALI persetujuan admin yang secara eksklusif hanya untuk Administrator Pertama.
         Gate::before(function (User $user, string $ability): ?bool {
-            return $user->hasRole('admin') ? true : null;
+            if ($ability === 'manage-admin-requests') {
+                return $user->isFirstAdmin();
+            }
+
+            return ($user->hasRole('admin') || $user->isFirstAdmin()) ? true : null;
+        });
+
+        Gate::define('manage-admin-requests', function (User $user): bool {
+            return $user->isFirstAdmin();
         });
 
         Gate::define('manage-assets', function (User $user): bool {

@@ -23,6 +23,12 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'is_first_admin',
+        'admin_request_status',
+        'admin_request_reason',
+        'admin_requested_at',
+        'admin_action_at',
+        'admin_action_by',
     ];
 
     /**
@@ -31,6 +37,7 @@ class User extends Authenticatable
      */
     protected $attributes = [
         'role' => 'viewer',
+        'is_first_admin' => false,
     ];
 
     protected $hidden = [
@@ -48,12 +55,30 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'is_first_admin' => 'boolean',
+            'admin_requested_at' => 'datetime',
+            'admin_action_at' => 'datetime',
         ];
+    }
+
+    public function isFirstAdmin(): bool
+    {
+        return (bool) $this->is_first_admin;
+    }
+
+    public function hasPendingAdminRequest(): bool
+    {
+        return $this->admin_request_status === 'pending';
+    }
+
+    public function adminApprover()
+    {
+        return $this->belongsTo(self::class, 'admin_action_by');
     }
 
     public function isAdmin(): bool
     {
-        if ($this->role === UserRole::Admin->value) {
+        if ($this->is_first_admin || $this->role === UserRole::Admin->value) {
             return true;
         }
 

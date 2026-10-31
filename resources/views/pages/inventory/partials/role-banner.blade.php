@@ -1,5 +1,26 @@
 {{-- BANNER INFORMASI PERAN & HAK AKSES INVENTARIS --}}
-@if(auth()->user()?->isAdmin())
+@if(auth()->user()?->isFirstAdmin())
+    <div class="alert bg-amber-500/10 border border-amber-500/30 shadow-sm rounded-2xl mb-6 flex items-start gap-3">
+        <div class="w-10 h-10 rounded-xl bg-amber-500/20 text-amber-700 flex items-center justify-center shrink-0 mt-0.5 text-lg">
+            👑
+        </div>
+        <div class="flex-1 text-xs">
+            <div class="font-bold text-sm text-amber-900 flex items-center justify-between flex-wrap gap-2">
+                <div class="flex items-center gap-2">
+                    <span>Peran: Administrator Pertama (Super Admin)</span>
+                    <span class="badge badge-warning badge-xs font-bold">OTORITAS UTAMA</span>
+                </div>
+                <a href="{{ route('admin.access-requests') }}" class="btn btn-warning btn-xs font-bold gap-1 shadow-sm" wire:navigate>
+                    <x-icon name="o-shield-check" class="w-3.5 h-3.5" />
+                    <span>Persetujuan Admin</span>
+                </a>
+            </div>
+            <p class="text-amber-950/80 mt-1 leading-relaxed">
+                Anda masuk sebagai <b>Administrator Pertama</b>. Anda memiliki wewenang penuh inventaris serta <b>kewenangan eksklusif</b> untuk menyetujui atau menolak permohonan hak akses Administrator bagi pengguna lain.
+            </p>
+        </div>
+    </div>
+@elseif(auth()->user()?->isAdmin())
     <div class="alert bg-primary/5 border border-primary/20 shadow-sm rounded-2xl mb-6 flex items-start gap-3">
         <div class="w-10 h-10 rounded-xl bg-primary/20 text-primary flex items-center justify-center shrink-0 mt-0.5">
             <x-icon name="o-shield-check" class="w-5 h-5 text-primary" />

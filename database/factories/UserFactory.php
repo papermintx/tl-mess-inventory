@@ -46,6 +46,33 @@ class UserFactory extends Factory
     }
 
     /**
+     * State untuk akun Administrator Pertama (Super Admin / First Admin)
+     */
+    public function firstAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+            'is_first_admin' => true,
+            'admin_request_status' => 'approved',
+            'admin_action_at' => now(),
+        ]);
+    }
+
+    /**
+     * State untuk pengguna yang mengajukan permohonan menjadi Admin
+     */
+    public function pendingAdmin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'viewer',
+            'is_first_admin' => false,
+            'admin_request_status' => 'pending',
+            'admin_request_reason' => 'Permohonan diajukan oleh pengguna.',
+            'admin_requested_at' => now(),
+        ]);
+    }
+
+    /**
      * State untuk akun Auditor / Peninjau
      */
     public function viewer(): static
