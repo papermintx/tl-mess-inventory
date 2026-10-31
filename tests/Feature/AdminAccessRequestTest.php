@@ -2,8 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Mail\AdminApprovedMail;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Volt\Volt;
 use Spatie\Permission\Models\Role;
 use Tests\TestCase;
@@ -55,6 +57,8 @@ class AdminAccessRequestTest extends TestCase
 
     public function test_first_admin_can_approve_pending_admin_request(): void
     {
+        Mail::fake();
+
         $firstAdmin = User::factory()->firstAdmin()->create();
         $firstAdmin->assignRole('admin');
 
@@ -72,6 +76,10 @@ class AdminAccessRequestTest extends TestCase
         $this->assertSame($firstAdmin->id, $applicant->admin_action_by);
         $this->assertNotNull($applicant->admin_action_at);
         $this->assertTrue($applicant->hasRole('admin'));
+
+        Mail::assertSent(AdminApprovedMail::class, function ($mail) use ($applicant) {
+            return $mail->hasTo($applicant->email);
+        });
     }
 
     public function test_first_admin_can_reject_pending_admin_request(): void

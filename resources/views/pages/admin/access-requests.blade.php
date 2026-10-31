@@ -1,6 +1,9 @@
 <?php
 
+use App\Mail\AdminApprovedMail;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Mail;
 use Livewire\Attributes\Title;
 use Livewire\Volt\Component;
 use Livewire\WithPagination;
@@ -53,7 +56,14 @@ new #[Title('Kelola Hak Akses Administrator - Mess Tanjung Lesung')] class exten
             $user->syncRoles(['admin']);
         }
 
-        $this->success("Pengguna {$user->name} berhasil disetujui sebagai Administrator!", position: 'toast-top');
+        // Kirim email pemberitahuan resmi bahwa akun dan hak akses admin telah aktif
+        try {
+            Mail::to($user->email)->send(new AdminApprovedMail($user));
+        } catch (\Throwable $e) {
+            Log::error("Gagal mengirim email persetujuan ke {$user->email}: ".$e->getMessage());
+        }
+
+        $this->success("Pengguna {$user->name} berhasil disetujui sebagai Administrator dan email konfirmasi akun telah dikirimkan!", position: 'toast-top');
     }
 
     public function reject(int $userId): void
@@ -123,7 +133,13 @@ new #[Title('Kelola Hak Akses Administrator - Mess Tanjung Lesung')] class exten
             $user->syncRoles(['admin']);
         }
 
-        $this->success("{$user->name} berhasil dipromosikan menjadi Administrator!", position: 'toast-top');
+        try {
+            Mail::to($user->email)->send(new AdminApprovedMail($user));
+        } catch (\Throwable $e) {
+            Log::error("Gagal mengirim email persetujuan ke {$user->email}: ".$e->getMessage());
+        }
+
+        $this->success("{$user->name} berhasil dipromosikan menjadi Administrator dan email pemberitahuan telah dikirimkan!", position: 'toast-top');
     }
 
     public function with(): array
