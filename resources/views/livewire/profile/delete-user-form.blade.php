@@ -6,6 +6,7 @@ use Livewire\Volt\Component;
 
 new class extends Component
 {
+    public bool $modalDelete = false;
     public string $password = '';
 
     /**
@@ -26,53 +27,37 @@ new class extends Component
 <section class="space-y-6">
     <header>
         <h2 class="text-lg font-medium text-gray-900">
-            {{ __('Delete Account') }}
+            {{ __('Hapus Akun') }}
         </h2>
 
         <p class="mt-1 text-sm text-gray-600">
-            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
+            {{ __('Setelah akun Anda dihapus, seluruh data dan hak akses Anda akan dihapus secara permanen. Pastikan Anda telah menyimpan informasi penting sebelum melanjutkan.') }}
         </p>
     </header>
 
-    <x-danger-button
-        x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Delete Account') }}</x-danger-button>
+    <x-button
+        label="Hapus Akun"
+        class="btn-error text-white"
+        wire:click="$set('modalDelete', true)"
+    />
 
-    <x-modal name="confirm-user-deletion" :show="$errors->isNotEmpty()" focusable>
-        <form wire:submit="deleteUser" class="p-6">
-
-            <h2 class="text-lg font-medium text-gray-900">
-                {{ __('Are you sure you want to delete your account?') }}
-            </h2>
-
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+    <x-modal wire:model="modalDelete" title="Konfirmasi Hapus Akun" subtitle="Tindakan ini permanen dan tidak dapat dibatalkan">
+        <form wire:submit.prevent="deleteUser" class="space-y-4">
+            <p class="text-sm text-base-content/80">
+                Apakah Anda yakin ingin menghapus akun ini secara permanen? Masukkan kata sandi akun Anda untuk mengonfirmasi.
             </p>
 
-            <div class="mt-6">
-                <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
+            <x-input
+                type="password"
+                wire:model="password"
+                label="Kata Sandi"
+                placeholder="Masukkan kata sandi Anda"
+                icon="o-key"
+            />
 
-                <x-text-input
-                    wire:model="password"
-                    id="password"
-                    name="password"
-                    type="password"
-                    class="mt-1 block w-3/4"
-                    placeholder="{{ __('Password') }}"
-                />
-
-                <x-input-error :messages="$errors->get('password')" class="mt-2" />
-            </div>
-
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
-
-                <x-danger-button class="ms-3">
-                    {{ __('Delete Account') }}
-                </x-danger-button>
+            <div class="modal-action flex justify-end gap-2 pt-2">
+                <x-button label="Batal" type="button" @click="$wire.modalDelete = false" />
+                <x-button label="Hapus Akun Saya" class="btn-error text-white" type="submit" />
             </div>
         </form>
     </x-modal>

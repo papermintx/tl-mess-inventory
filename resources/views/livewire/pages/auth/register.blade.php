@@ -46,7 +46,7 @@ new #[Layout('layouts.guest')] class extends Component
         ];
 
         if (! empty($this->username)) {
-            $rules['username'] = ['string', 'alpha_dash', 'max:50', 'unique:'.User::class.',username'];
+            $rules['username'] = ['string', 'regex:/^[a-zA-Z0-9._-]+$/', 'max:50', 'unique:'.User::class.',username'];
         }
 
         if (! $this->isFirstUser) {

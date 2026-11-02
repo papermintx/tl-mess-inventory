@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class GuestInventoryAccessTest extends TestCase
 {
+    use RefreshDatabase;
+
     /**
      * Memastikan pengunjung (guest) dapat melihat halaman inventaris tanpa harus login.
      */

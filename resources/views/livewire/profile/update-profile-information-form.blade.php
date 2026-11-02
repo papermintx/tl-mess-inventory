@@ -31,7 +31,7 @@ new class extends Component
 
         $validated = $this->validate([
             'name' => ['required', 'string', 'max:255'],
-            'username' => ['nullable', 'string', 'alpha_dash', 'max:50', Rule::unique(User::class)->ignore($user->id)],
+            'username' => ['nullable', 'string', 'regex:/^[a-zA-Z0-9._-]+$/', 'max:50', Rule::unique(User::class)->ignore($user->id)],
             'email' => ['required', 'string', 'lowercase', 'email', 'max:255', Rule::unique(User::class)->ignore($user->id)],
         ]);
 

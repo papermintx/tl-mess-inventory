@@ -48,11 +48,11 @@
         ],
         "dev": [
             "Composer\\Config::disableProcessTimeout",
-            "PHP_INI_SCAN_DIR=:$PWD/php-config @php artisan dev"
+            "@php artisan dev"
         ],
         "serve": [
             "Composer\\Config::disableProcessTimeout",
-            "PHP_INI_SCAN_DIR=:$PWD/php-config @php artisan serve"
+            "@php artisan serve"
         ],
         "test": [
             "@php artisan config:clear --ansi @no_additional_args",
